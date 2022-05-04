@@ -39,18 +39,18 @@ exports.handler = async (event, context, callback) => {
     myContext.eventContext = context;
     myContext.event = event;
 
-    // setting correlationId in the subway context.
+    // setting correlationId in the context.
     myContext.saveCorrelationId(myContext.event, myContext.eventContext);
 
     // initializing the log builder
-    myContext.logBuilder = require('@subwayapi/log-entry-builder')({
+    myContext.logBuilder = require('./log-entry-builder')({
         correlationId: myContext.correlationId,
         event: myContext.event,
         awsContext: myContext.eventContext
     });
 
     myContext.log.info(myContext.logBuilder
-        .withMessage('order-db-update-handler received an event')
+        .withMessage('lambda-db-handler received an event')
         .buildServiceRequestLogEntry(event, (event) => util.maskJsonData(event)).info);
 
     // Setup service context for Unit Test

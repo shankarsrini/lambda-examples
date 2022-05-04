@@ -8,9 +8,6 @@ const validRequestEvent = {
     'params': {
         header: {
             'Content-Type': 'application/json',
-            'X-Olo-Timestamp': '635496010947825810',
-            'X-Olo-Transaction-Id': 'cff9e75d-fbb2-48d1-a090-d4916ce6ad3d',
-            'X-Olo-Transaction-Signature': 'elzh4zW3Lz4Avw/c7QR81dLNAeLhNhjrWGWZEpm74UE='
         }
     }
 };
@@ -20,9 +17,6 @@ const invalidSignatureRequestEvent = {
     'params': {
         header: {
             'Content-Type': 'application/json',
-            'X-Olo-Timestamp': '635496010947825810',
-            'X-Olo-Transaction-Id': 'cff9e75d-fbb2-48d1-a090-d4916ce6ad3d',
-            'X-Olo-Transaction-Signature': 'z'
         }
     }
 };
