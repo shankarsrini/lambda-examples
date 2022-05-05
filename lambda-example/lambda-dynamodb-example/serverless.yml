@@ -3,7 +3,7 @@
 #    docs.serverless.com
 
 # deploy command:
-# LOG_LEVEL=debug ROLE_ARN=arn:aws:iam::433605566280:role/SubwayAPI_Basic_Lambda npx sls deploy
+# LOG_LEVEL=debug ROLE_ARN=arn:aws:iam:::role/API_Basic_Lambda npx sls deploy
 # LOG_LEVEL=debug npx sls deploy --region us-west-2
 
 service: FreshOrder
@@ -15,7 +15,6 @@ plugins:
   - serverless-plugin-aws-alerts
   - serverless-plugin-split-stacks
   - serverless-prune-plugin
-  - "@subwayapi/serverless-sqs-alarms-plugin"
   - serverless-reqvalidator-plugin
   - serverless-aws-documentation
   - serverless-plugin-ifelse
@@ -25,19 +24,16 @@ provider:
   runtime: nodejs12.x
   stage: ${opt:stage, 'DEV2'}
   region: ${opt:region}
-  #accountId: ${env:ACCOUNTID, '088379587629'} # set role all Lambdas will use
-  role: ${env:ROLE_ARN, 'arn:aws:iam::088379587629:role/SubwayAPI_Basic_Lambda'} # set role all Lambdas will use
+  role: ${env:ROLE_ARN, 'arn:aws:iam::role/API_Basic_Lambda'} # set role all Lambdas will use
   timeout: 29
   memorySize: 128
   stackName: ${self:service}${self:provider.stage}
   apiName: FreshOrder ${self:provider.stage}
   stackTags:
     Owner: middleware
-    PRODUCT: fresh-order
-    ENTITY: Fresh-Order
-    ApplicationName: fresh-order
-    ApplicationID: APM0001915
-    CostCenterID: ITPTREPEXZZ
+    PRODUCT: order
+    ENTITY: Order
+    ApplicationName: order
     CreatedBy: serverless
     ENVIRONMENT: ${self:provider.stage}
     GEO: ${self:provider.region}
