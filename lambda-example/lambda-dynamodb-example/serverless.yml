@@ -1,0 +1,76 @@
+# This file is the main config file for the service.
+# For full config options, check the docs:
+#    docs.serverless.com
+
+# deploy command:
+# LOG_LEVEL=debug ROLE_ARN=arn:aws:iam::433605566280:role/SubwayAPI_Basic_Lambda npx sls deploy
+# LOG_LEVEL=debug npx sls deploy --region us-west-2
+
+service: FreshOrder
+
+plugins:
+  - serverless-plugin-stage-variables
+  - serverless-plugin-test-helper
+  - serverless-create-global-dynamodb-table
+  - serverless-plugin-aws-alerts
+  - serverless-plugin-split-stacks
+  - serverless-prune-plugin
+  - "@subwayapi/serverless-sqs-alarms-plugin"
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
+  - serverless-plugin-ifelse
+  - serverless-plugin-log-retention
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'DEV2'}
+  region: ${opt:region}
+  #accountId: ${env:ACCOUNTID, '088379587629'} # set role all Lambdas will use
+  role: ${env:ROLE_ARN, 'arn:aws:iam::088379587629:role/SubwayAPI_Basic_Lambda'} # set role all Lambdas will use
+  timeout: 29
+  memorySize: 128
+  stackName: ${self:service}${self:provider.stage}
+  apiName: FreshOrder ${self:provider.stage}
+  stackTags:
+    Owner: middleware
+    PRODUCT: fresh-order
+    ENTITY: Fresh-Order
+    ApplicationName: fresh-order
+    ApplicationID: APM0001915
+    CostCenterID: ITPTREPEXZZ
+    CreatedBy: serverless
+    ENVIRONMENT: ${self:provider.stage}
+    GEO: ${self:provider.region}
+    REGION: ${self:provider.region}
+  # Enabling ApiGateway CloudWatch Logs
+  #  logs:
+  #    restApi:
+  #      fullExecutionData: false
+  # environment variables shared by all functions
+  environment: ${file(./Serverless/environments/environment-${self:provider.region}.yml):${self:provider.stage}}
+  layers:
+    - ${env:DT_ARN}
+  # Enabling ApiGateway Metrics Logs
+  #apiGateway:
+  #metrics: true
+
+custom: ${file(./Serverless/custom.yml):${self:provider.stage}}
+
+# you can add packaging information here. excludeDevDependencies must be false. if turn true the deployment time increases 2 times. exccuding devdependencies done in deploy-regional-job.yml
+package:
+  excludeDevDependencies: false
+  individually: true
+  include:
+    - "!./**"
+
+functions: ${file(./Serverless/functions.yml):functions}
+resources:
+  - ${file(./Serverless/sqs-resources.yml)}
+  - ${file(./Serverless/api-gateway-response.yml)}
+  - ${file(./Serverless/sqs-triggers.yml)}
+  - ${file(Serverless/s3-resources.yml)}
+  - ${file(./Serverless/dynamodb-resources.yml)}
+  - ${file(./Serverless/eventbus-resources.yml)}
+  - ${file(./Serverless/eventrules-resources.yml)}
+  - ${file(./Serverless/event-bridge-registry.yml)}
+  - ${file(./Serverless/event-bridge-schema.yml)}
